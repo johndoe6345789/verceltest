@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    name: Build with ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Node.js environment
+        uses: ./.github/actions/setup-project
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Restore or cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: |
+            .next/cache
+          # Generate a new cache whenever packages or source files change.
+          key: nextjs-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('app/**', 'components/**', 'lib/**') }}
+
+      - name: Build Next.js
+        run: pnpm run build
+
+      - if: matrix.node-version == '22.x' && success()
+        name: Cache Next.js build output
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            .next
+          key: nextjs-build-${{ matrix.node-version }}-${{ github.sha }}
