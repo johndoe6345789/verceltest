@@ -2,6 +2,16 @@
 
 This directory contains GitHub Actions workflows copied and adapted from [primary_next_template](https://github.com/johndoe6345789/primary_next_template).
 
+## Status Overview
+
+| Workflow | Status | Notes |
+|----------|--------|-------|
+| CI.yml | ✅ Ready | Works out of the box |
+| nextjs.yml | ⚠️ Limited | Pre-existing, incompatible with dynamic features |
+| checkly.yml | ⏸️ Requires Setup | Needs Checkly account and configuration |
+| crowdin.yml | ⏸️ Requires Setup | Needs Crowdin account and configuration |
+| release.yml | ⏸️ Requires Setup | Needs semantic-release configuration |
+
 ## Workflows
 
 ### CI.yml
@@ -21,7 +31,9 @@ Deploys the Next.js site to GitHub Pages:
 - Uploads artifacts to GitHub Pages
 - Deploys to GitHub Pages
 
-**Note:** This workflow requires Next.js to be configured for static export. To enable this, add `output: 'export'` to your `next.config.ts`. However, note that this repository uses dynamic features (middleware, Redis) that are not compatible with static export. This workflow is included for reference but may need to be disabled or removed if static export is not desired.
+**Note:** This workflow was pre-existing in the repository. However, it requires Next.js to be configured for static export by adding `output: 'export'` to `next.config.ts`. 
+
+**Important:** This repository uses dynamic features (middleware, Redis, server-side rendering) that are **not compatible** with static export. This workflow is kept for reference but will not work without significant changes to the application architecture. Consider disabling or removing this workflow if you plan to deploy to Vercel or another platform that supports dynamic features.
 
 ### checkly.yml
 **Trigger:** Deployment status events
@@ -32,10 +44,13 @@ Runs E2E tests on Checkly after successful deployments:
 - Creates test summary reports
 - Deploys checks to production environment
 
-**Note:** Requires Checkly secrets to be configured:
-- `CHECKLY_API_KEY`
-- `CHECKLY_ACCOUNT_ID`
-- `VERCEL_BYPASS_TOKEN`
+**Note:** This workflow is copied for reference but requires additional setup:
+- Checkly secrets must be configured: `CHECKLY_API_KEY`, `CHECKLY_ACCOUNT_ID`, `VERCEL_BYPASS_TOKEN`
+- Checkly configuration files must be added to the repository (e.g., `__checks__/` directory)
+- `dotenv-cli` and `checkly` packages should be installed: `pnpm add -D dotenv-cli checkly`
+- A production environment configuration file is needed
+
+This workflow will not run successfully without proper Checkly setup.
 
 ### crowdin.yml
 **Trigger:** Push to main branch, Daily at 5am UTC, Manual workflow dispatch
@@ -45,9 +60,12 @@ Synchronizes translations with Crowdin:
 - Downloads translations from Crowdin
 - Creates pull requests with new translations
 
-**Note:** Requires Crowdin secrets to be configured:
-- `CROWDIN_PROJECT_ID`
-- `CROWDIN_PERSONAL_TOKEN`
+**Note:** This workflow is copied for reference but requires additional setup:
+- Crowdin secrets must be configured: `CROWDIN_PROJECT_ID`, `CROWDIN_PERSONAL_TOKEN`
+- Crowdin configuration file (`crowdin.yml`) must be added to the repository root
+- Localization source files must be organized according to Crowdin configuration
+
+This workflow will not run successfully without proper Crowdin setup.
 
 ### release.yml
 **Trigger:** After successful CI workflow completion on main branch
@@ -57,7 +75,20 @@ Creates semantic releases:
 - Verifies dependency integrity with `pnpm audit signatures`
 - Creates GitHub releases using semantic-release
 
-**Note:** Release configuration should be added to `package.json` if semantic releases are desired.
+**Note:** This workflow requires semantic-release configuration in `package.json`. Add the following configuration to enable it:
+
+```json
+"release": {
+  "branches": ["main"],
+  "plugins": [
+    ["@semantic-release/commit-analyzer", { "preset": "conventionalcommits" }],
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/github"
+  ]
+}
+```
+
+Also install the required dependencies: `pnpm add -D semantic-release @semantic-release/commit-analyzer @semantic-release/release-notes-generator conventional-changelog-conventionalcommits`
 
 ## Custom Actions
 
