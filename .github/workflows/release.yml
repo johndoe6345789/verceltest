@@ -10,10 +10,6 @@ on:
 
 jobs:
   release:
-    strategy:
-      matrix:
-        node-version: [22.x]
-
     name: Create a new release
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -31,7 +27,7 @@ jobs:
       - name: Set up Node.js environment
         uses: ./.github/actions/setup-project
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '22.x'
 
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: pnpm audit signatures

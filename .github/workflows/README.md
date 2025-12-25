@@ -21,6 +21,8 @@ Deploys the Next.js site to GitHub Pages:
 - Uploads artifacts to GitHub Pages
 - Deploys to GitHub Pages
 
+**Note:** This workflow requires Next.js to be configured for static export. To enable this, add `output: 'export'` to your `next.config.ts`. However, note that this repository uses dynamic features (middleware, Redis) that are not compatible with static export. This workflow is included for reference but may need to be disabled or removed if static export is not desired.
+
 ### checkly.yml
 **Trigger:** Deployment status events
 

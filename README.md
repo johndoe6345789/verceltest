@@ -80,10 +80,10 @@ The middleware (`middleware.ts`) intelligently detects subdomains across various
 This repository includes GitHub Actions workflows for continuous integration and deployment:
 
 - **CI**: Automatically builds and tests the application on every push and pull request
-- **GitHub Pages Deployment**: Deploys the static site to GitHub Pages
 - **Checkly E2E Tests**: Runs end-to-end tests after deployments (requires Checkly account)
 - **Crowdin Translations**: Synchronizes translations (requires Crowdin account)
 - **Semantic Release**: Automatically creates releases based on commit messages
+- **GitHub Pages**: Available for static exports (requires configuration changes, see `.github/workflows/README.md`)
 
 See [.github/workflows/README.md](.github/workflows/README.md) for more details.
 
