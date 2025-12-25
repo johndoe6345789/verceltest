@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
+    permissions:
+      contents: write # needed for Crowdin to commit translations
+      pull-requests: write # needed for Crowdin to create PRs
+
     steps:
       - uses: actions/checkout@v6
 
